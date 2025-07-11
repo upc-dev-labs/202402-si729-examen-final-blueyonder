@@ -4,6 +4,26 @@ import com.blueyonder.platform.u20201e843.scm.domain.model.valueobjects.Inventor
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * JPA AttributeConverter for InventoryItemStatus.
+ *
+ * Converts the InventoryItemStatus enum to its numeric ID for database storage,
+ * and converts the stored integer ID back to the corresponding enum.
+ *
+ * This ensures that the status field in the database uses numeric values
+ * defined by the business rules, providing stable and explicit mapping.
+ *
+ * Example:
+ * <ul>
+ *     <li>WITH_STOCK ➜ 0</li>
+ *     <li>UNDER_MINIMUM ➜ 1</li>
+ * </ul>
+ *
+ * Auto-applied to all InventoryItemStatus fields via the @Converter(autoApply = true) annotation.
+ *
+ * @author Author
+ * @since 1.0
+ */
 @Converter(autoApply = true)
 public class InventoryItemStatusConverter implements AttributeConverter<InventoryItemStatus, Integer> {
 
