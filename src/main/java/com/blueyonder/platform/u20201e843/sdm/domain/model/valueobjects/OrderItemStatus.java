@@ -3,17 +3,7 @@ package com.blueyonder.platform.u20201e843.sdm.domain.model.valueobjects;
 import lombok.Getter;
 
 /**
- * Enumeration representing the status of an Order Item.
- *
- * Each status has a numeric ID and a name used for database storage and business logic.
- *
- * Possible values:
- * <ul>
- *     <li>0 - READY_FOR_DISPATCH</li>
- *     <li>1 - WAITING_FOR_INVENTORY</li>
- *     <li>2 - DISPATCHING</li>
- *     <li>3 - COMPLETED</li>
- * </ul>
+ * Order item status with numeric ID mapping.
  *
  * Provides utility methods for mapping from ID or name.
  *

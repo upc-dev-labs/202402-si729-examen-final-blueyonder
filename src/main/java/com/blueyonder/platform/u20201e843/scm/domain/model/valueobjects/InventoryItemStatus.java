@@ -3,18 +3,7 @@ package com.blueyonder.platform.u20201e843.scm.domain.model.valueobjects;
 import lombok.Getter;
 
 /**
- * Enumeration representing the status of an Inventory Item.
- *
- * Each status has a numeric ID and a name for identification and storage purposes.
- * The enum supports mapping from ID and name values, useful for database persistence.
- *
- * Possible values:
- * <ul>
- *     <li>0 - WITH_STOCK</li>
- *     <li>1 - UNDER_MINIMUM</li>
- *     <li>2 - AUDITING</li>
- *     <li>3 - DISABLED</li>
- * </ul>
+ * Inventory item status with numeric ID mapping.
  *
  * Used to enforce business rules related to inventory availability and auditing states.
  *

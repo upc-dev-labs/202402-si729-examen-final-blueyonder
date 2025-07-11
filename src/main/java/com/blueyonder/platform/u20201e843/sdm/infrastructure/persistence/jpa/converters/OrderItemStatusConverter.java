@@ -5,13 +5,8 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 /**
- * JPA AttributeConverter for OrderItemStatus.
- *
- * Converts the OrderItemStatus enum to its numeric ID for database storage,
- * and restores the enum from its stored integer ID.
- *
- * Ensures consistent mapping of Order Item statuses in the database.
- *
+ * JPA converter for mapping status enum to its numeric ID.
+ * <p>
  * Auto-applied to all OrderItemStatus fields via the @Converter(autoApply = true) annotation.
  *
  * @author Author
