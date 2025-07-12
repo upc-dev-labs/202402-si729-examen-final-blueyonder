@@ -22,22 +22,13 @@ public class ScmContextFacadeImpl implements ScmContextFacade {
 
     @Override
     public boolean isReadyForDispatch(String skuIdentifier, Double requestedQuantity) {
-        var inventoryItem = inventoryItemRepository.findBySkuIdentifier(new SkuIdentifier(skuIdentifier));
+        var inventoryItem = inventoryItemRepository.findBySkuIdentifier(new SkuIdentifier(skuIdentifier))
+                .orElseThrow(() -> new InventoryItemNotFoundException(skuIdentifier));
 
-        if (inventoryItem.isEmpty()) throw new InventoryItemNotFoundException(skuIdentifier);
+        var isReady = inventoryItem.processDispatchRequest(requestedQuantity);
 
-        var inventoryItemEntity = inventoryItem.get();
+        inventoryItemRepository.save(inventoryItem);
 
-        if (inventoryItemEntity.getAvailableQuantity() >= requestedQuantity) {
-            inventoryItemEntity.setAvailableQuantity(inventoryItemEntity.getAvailableQuantity() - requestedQuantity);
-            inventoryItemEntity.setReservedQuantity(inventoryItemEntity.getReservedQuantity() + requestedQuantity);
-            inventoryItemRepository.save(inventoryItemEntity);
-            return true;
-        } else {
-            inventoryItemEntity.setPendingSupplyQuantity(inventoryItemEntity.getPendingSupplyQuantity() + requestedQuantity - inventoryItemEntity.getAvailableQuantity());
-            inventoryItemEntity.setReservedQuantity(inventoryItemEntity.getReservedQuantity() + inventoryItemEntity.getAvailableQuantity());
-            inventoryItemEntity.setAvailableQuantity(0.0);
-            return false;
-        }
+        return isReady;
     }
 }
