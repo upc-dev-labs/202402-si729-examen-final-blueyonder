@@ -9,7 +9,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Entity
@@ -28,16 +27,13 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
     @Column(nullable = false)
     private Double minimumQuantity;
 
-    @Setter
     @NotNull
     @Column(nullable = false)
     private Double availableQuantity;
 
-    @Setter
     @Column(nullable = false)
     private Double reservedQuantity;
 
-    @Setter
     @Column(nullable = false)
     private Double pendingSupplyQuantity;
 
