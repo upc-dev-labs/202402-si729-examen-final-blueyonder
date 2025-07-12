@@ -4,6 +4,7 @@ import com.blueyonder.platform.u20201e843.sdm.domain.model.commands.CreateOrderI
 import com.blueyonder.platform.u20201e843.sdm.domain.model.valueobjects.OrderItemStatus;
 import com.blueyonder.platform.u20201e843.shared.domain.model.entities.AuditableModel;
 import com.blueyonder.platform.u20201e843.shared.domain.model.valueobjects.SkuIdentifier;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.DecimalMin;
@@ -19,20 +20,25 @@ public class OrderItem extends AuditableModel {
 
     @Min(1)
     @NotNull
+    @Column(nullable = false)
     private Long orderId;
 
     @Embedded
     @NotNull
+    @Column(nullable = false)
     private SkuIdentifier skuIdentifier;
 
     @DecimalMin(value = "0.01", inclusive = true)
     @NotNull
+    @Column(nullable = false)
     private Double requestedQuantity;
 
     @NotNull
+    @Column(nullable = false)
     private OrderItemStatus status;
 
     @NotNull
+    @Column(nullable = false)
     private Date orderedAt;
 
     public OrderItem() {}
