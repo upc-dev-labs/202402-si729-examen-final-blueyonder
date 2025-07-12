@@ -1,5 +1,6 @@
 package com.blueyonder.platform.u20201e843.scm.domain.model.aggregates;
 
+import com.blueyonder.platform.u20201e843.scm.domain.model.events.MinimumQuantityThresholdReachedEvent;
 import com.blueyonder.platform.u20201e843.scm.domain.model.valueobjects.InventoryItemStatus;
 import com.blueyonder.platform.u20201e843.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.blueyonder.platform.u20201e843.shared.domain.model.valueobjects.SkuIdentifier;
@@ -49,5 +50,35 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
         this.status = InventoryItemStatus.WITH_STOCK;
         this.reservedQuantity = 0.0;
         this.pendingSupplyQuantity = 0.0;
+    }
+
+    public boolean processDispatchRequest(Double requestedQuantity) {
+        if (this.availableQuantity >= requestedQuantity) {
+            this.availableQuantity -= requestedQuantity;
+            this.reservedQuantity += requestedQuantity;
+            return true;
+        } else {
+            var shortage = requestedQuantity - this.availableQuantity;
+            this.pendingSupplyQuantity += shortage;
+            this.availableQuantity = 0.0;
+            this.updateAvailableQuantity(this.availableQuantity);
+            return false;
+        }
+    }
+
+    public void updateAvailableQuantity(Double availableQuantity) {
+        this.availableQuantity = availableQuantity;
+
+        if (this.availableQuantity < this.minimumQuantity)
+            this.reachMinimumQuantityThreshold();
+    }
+
+    public void reachMinimumQuantityThreshold() {
+        status = InventoryItemStatus.UNDER_MINIMUM;
+        this.registerEvent(new MinimumQuantityThresholdReachedEvent(
+                this,
+                this.skuIdentifier,
+                this.minimumQuantity + this.pendingSupplyQuantity)
+        );
     }
 }
