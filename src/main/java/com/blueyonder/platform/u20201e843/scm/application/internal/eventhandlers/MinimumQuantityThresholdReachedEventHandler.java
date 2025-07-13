@@ -11,7 +11,7 @@ public class MinimumQuantityThresholdReachedEventHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MinimumQuantityThresholdReachedEventHandler.class);
 
-    @EventListener
+    @EventListener(MinimumQuantityThresholdReachedEvent.class)
     public void on(MinimumQuantityThresholdReachedEvent event) {
         LOGGER.info("SCM: A supply order is needed for the product with SKU {} with at least {} units",
                 event.getSkuIdentifier().skuIdentifier(),
