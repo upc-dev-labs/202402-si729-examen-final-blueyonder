@@ -29,4 +29,13 @@ public class AuditableAbstractAggregateRoot<T extends AbstractAggregateRoot<T>> 
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
+
+    /**
+     * Registers a domain event.
+     *
+     * @param event the domain event to register
+     */
+    public void addDomainEvent(Object event) {
+        super.registerEvent(event);
+    }
 }
