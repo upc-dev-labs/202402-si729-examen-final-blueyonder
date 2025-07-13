@@ -10,6 +10,15 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+/**
+ * Aggregate root representing an Inventory Item in the Supply Chain Management bounded context.
+ * <p>
+ * Manages the stock levels and status of a product identified by its SKU.
+ * Handles business rules such as dispatch processing and threshold checks.
+ * </p>
+ *
+ * @author Author
+ */
 @Getter
 @Entity
 public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem> {
@@ -37,8 +46,18 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
     @Column(nullable = false)
     private Double pendingSupplyQuantity;
 
+    /**
+     * Default constructor for JPA.
+     */
     public InventoryItem() {}
 
+    /**
+     * Constructs an InventoryItem with initial values.
+     *
+     * @param skuIdentifier      SKU identifier of the product.
+     * @param minimumQuantity    Minimum threshold quantity.
+     * @param availableQuantity  Initial available stock quantity.
+     */
     public InventoryItem(String skuIdentifier, Double minimumQuantity,  Double availableQuantity) {
         this.skuIdentifier = new SkuIdentifier(skuIdentifier);
         this.minimumQuantity = minimumQuantity;
@@ -48,12 +67,23 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
         this.pendingSupplyQuantity = 0.0;
     }
 
+    /**
+     * Processes a dispatch request by adjusting stock levels.
+     * Handles both full and partial dispatch scenarios.
+     * Checks if the minimum threshold is breached and emits an event if necessary.
+     *
+     * @param requestedQuantity Quantity requested for dispatch.
+     * @return true if the dispatch can be fully satisfied from available stock, false if there is a shortage.
+     */
     public boolean processDispatchRequest(Double requestedQuantity) {
         this.applyDispatchRequest(requestedQuantity);
         this.ensureMinimumQuantityThreshold();
         return this.availableQuantity >= requestedQuantity;
     }
 
+    /**
+     * Marks this InventoryItem as UNDER_MINIMUM and emits a MinimumQuantityThresholdReachedEvent.
+     */
     public void reachMinimumQuantityThreshold() {
         status = InventoryItemStatus.UNDER_MINIMUM;
         this.registerEvent(new MinimumQuantityThresholdReachedEvent(
@@ -63,6 +93,12 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
         );
     }
 
+    /**
+     * Applies the stock adjustments for a dispatch request.
+     * Handles both full and partial dispatch cases.
+     *
+     * @param requestedQuantity Quantity requested for dispatch.
+     */
     private void applyDispatchRequest(Double requestedQuantity) {
         if (this.availableQuantity >= requestedQuantity) {
             this.availableQuantity -= requestedQuantity;
@@ -75,6 +111,10 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
         }
     }
 
+    /**
+     * Checks if the available quantity is below the minimum threshold
+     * and triggers the threshold event if necessary.
+     */
     private void ensureMinimumQuantityThreshold() {
         if (this.availableQuantity < this.minimumQuantity) {
             this.reachMinimumQuantityThreshold();

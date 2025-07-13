@@ -18,16 +18,42 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * REST controller exposing endpoints for managing Inventory Items.
+ * <p>
+ * Handles HTTP requests for registering new inventory items,
+ * delegating business logic to the application service layer.
+ * </p>
+ *
+ * @author Author
+ */
 @RestController
 @RequestMapping(value = "/api/v1/inventory-items", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Inventory Items", description = "Endpoints for managing inventory items")
 public class InventoryItemsController {
     private final InventoryItemCommandService inventoryItemCommandService;
 
+    /**
+     * Constructs the InventoryItemsController with the given command service.
+     *
+     * @param inventoryItemCommandService Application service for handling InventoryItem creation commands.
+     */
     public InventoryItemsController(InventoryItemCommandService inventoryItemCommandService) {
         this.inventoryItemCommandService = inventoryItemCommandService;
     }
 
+    /**
+     * Handles HTTP POST requests to create a new InventoryItem.
+     * <p>
+     * Transforms the incoming REST resource into a domain command,
+     * processes it through the service layer, and returns the created item
+     * as a REST resource with HTTP 201 status.
+     * </p>
+     *
+     * @param resource The request payload representing the InventoryItem to create.
+     * @return A ResponseEntity containing the created InventoryItemResource and HTTP 201 status,
+     *         or HTTP 400 if the request is invalid.
+     */
     @PostMapping
     @Operation(summary = "Create an Inventory Item", description = "Registers a new inventory item in the system")
     @ApiResponses(value = {

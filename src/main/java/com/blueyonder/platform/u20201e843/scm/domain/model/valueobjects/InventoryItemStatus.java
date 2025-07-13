@@ -4,7 +4,7 @@ import lombok.Getter;
 
 /**
  * Inventory item status with numeric ID mapping.
- *
+ * <p>
  * Used to enforce business rules related to inventory availability and auditing states.
  *
  * @author Author
