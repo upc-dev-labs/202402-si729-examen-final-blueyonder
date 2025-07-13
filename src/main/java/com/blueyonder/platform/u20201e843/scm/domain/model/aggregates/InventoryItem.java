@@ -49,25 +49,9 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
     }
 
     public boolean processDispatchRequest(Double requestedQuantity) {
-        if (this.availableQuantity >= requestedQuantity) {
-            this.availableQuantity -= requestedQuantity;
-            this.reservedQuantity += requestedQuantity;
-            this.updateAvailableQuantity(this.availableQuantity);
-            return true;
-        } else {
-            var shortage = requestedQuantity - this.availableQuantity;
-            this.pendingSupplyQuantity += shortage;
-            this.availableQuantity = 0.0;
-            this.updateAvailableQuantity(this.availableQuantity);
-            return false;
-        }
-    }
-
-    public void updateAvailableQuantity(Double availableQuantity) {
-        this.availableQuantity = availableQuantity;
-
-        if (this.availableQuantity < this.minimumQuantity)
-            this.reachMinimumQuantityThreshold();
+        this.applyDispatchRequest(requestedQuantity);
+        this.ensureMinimumQuantityThreshold();
+        return this.availableQuantity >= requestedQuantity;
     }
 
     public void reachMinimumQuantityThreshold() {
@@ -77,5 +61,23 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
                 this.skuIdentifier,
                 this.minimumQuantity + this.pendingSupplyQuantity)
         );
+    }
+
+    private void applyDispatchRequest(Double requestedQuantity) {
+        if (this.availableQuantity >= requestedQuantity) {
+            this.availableQuantity -= requestedQuantity;
+            this.reservedQuantity += requestedQuantity;
+        } else {
+            double shortage = requestedQuantity - this.availableQuantity;
+            this.pendingSupplyQuantity += shortage;
+            this.reservedQuantity += this.availableQuantity;
+            this.availableQuantity = 0.0;
+        }
+    }
+
+    private void ensureMinimumQuantityThreshold() {
+        if (this.availableQuantity < this.minimumQuantity) {
+            this.reachMinimumQuantityThreshold();
+        }
     }
 }
