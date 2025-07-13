@@ -52,6 +52,7 @@ public class InventoryItem extends AuditableAbstractAggregateRoot<InventoryItem>
         if (this.availableQuantity >= requestedQuantity) {
             this.availableQuantity -= requestedQuantity;
             this.reservedQuantity += requestedQuantity;
+            this.updateAvailableQuantity(this.availableQuantity);
             return true;
         } else {
             var shortage = requestedQuantity - this.availableQuantity;
