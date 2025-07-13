@@ -15,16 +15,42 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * REST controller exposing endpoints for managing Order Items.
+ * <p>
+ * Handles HTTP requests for creating new order items
+ * within the context of an existing order.
+ * </p>
+ *
+ * @author Author
+ */
 @RestController
 @RequestMapping(value = "/api/v1/orders/{orderId}/items", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Order Items", description = "Endpoints for managing order items")
 public class OrderItemsController {
     private final OrderItemCommandService orderItemCommandService;
-
+    /**
+     * Constructs the OrderItemsController with the required service.
+     *
+     * @param orderItemCommandService Application service for handling OrderItem creation commands.
+     */
     public OrderItemsController(OrderItemCommandService orderItemCommandService) {
         this.orderItemCommandService = orderItemCommandService;
     }
 
+    /**
+     * Handles HTTP POST requests to create a new OrderItem.
+     * <p>
+     * Transforms the incoming REST resource into a domain command,
+     * processes it through the service layer, and returns the created item
+     * as a REST resource with HTTP 201 status.
+     * </p>
+     *
+     * @param orderId  The ID of the order this item belongs to (path variable).
+     * @param resource The request body containing SKU identifier, requested quantity, and ordered date.
+     * @return A ResponseEntity containing the created OrderItemResource and HTTP 201 status,
+     *         or HTTP 400 if the request is invalid.
+     */
     @PostMapping
     @Operation(summary = "Create an Order Item", description = "Registers a new order item in the system")
     @ApiResponses(value = {

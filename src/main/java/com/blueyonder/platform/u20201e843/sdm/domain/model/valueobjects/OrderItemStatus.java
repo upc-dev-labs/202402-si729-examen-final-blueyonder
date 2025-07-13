@@ -4,7 +4,7 @@ import lombok.Getter;
 
 /**
  * Order item status with numeric ID mapping.
- *
+ * <p>
  * Provides utility methods for mapping from ID or name.
  *
  * @author Author

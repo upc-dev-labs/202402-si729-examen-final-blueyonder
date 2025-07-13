@@ -12,17 +12,48 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Application service implementation for handling OrderItem creation commands.
+ * <p>
+ * Validates business rules such as SKU existence, uniqueness within an order,
+ * and dispatch readiness. Coordinates with external SCM services and persists
+ * the resulting OrderItem aggregate.
+ * </p>
+ *
+ * @author Author
+ */
 @Service
 public class OrderItemCommandServiceImpl implements OrderItemCommandService {
 
     private final OrderItemRepository orderItemRepository;
     private final ExternalScmService externalScmService;
 
+    /**
+     * Constructs the OrderItemCommandServiceImpl with required dependencies.
+     *
+     * @param orderItemRepository Repository for persisting OrderItems.
+     * @param externalScmService  ACL service for checking inventory and dispatch readiness.
+     */
     public OrderItemCommandServiceImpl(OrderItemRepository orderItemRepository, ExternalScmService externalScmService) {
         this.orderItemRepository = orderItemRepository;
         this.externalScmService = externalScmService;
     }
 
+    /**
+     * Handles the creation of an OrderItem based on the provided command.
+     * <p>
+     * Validates SKU existence, ensures uniqueness within the order,
+     * checks dispatch readiness, and determines the resulting status.
+     * Persists the OrderItem aggregate.
+     * </p>
+     *
+     * @param command The command containing order details such as orderId, SKU identifier,
+     *                requested quantity, and orderedAt date.
+     * @return An Optional containing the created OrderItem if successful.
+     * @throws InventoryItemNotExistsException                  if the SKU does not exist in inventory.
+     * @throws OrderItemWithOrderIdAndSkuIdentifierExistsException if an OrderItem with the same orderId and SKU already exists.
+     * @throws IllegalArgumentException                         if an error occurs during persistence.
+     */
     @Override
     public Optional<OrderItem> handle(CreateOrderItemCommand command) {
         if (!externalScmService.existsInventoryItemBySkuIdentifier(command.skuIdentifier()))

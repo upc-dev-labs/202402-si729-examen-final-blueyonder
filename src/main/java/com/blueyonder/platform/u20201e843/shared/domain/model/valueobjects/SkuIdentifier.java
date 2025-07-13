@@ -5,9 +5,15 @@ import jakarta.persistence.Embeddable;
 import java.util.UUID;
 
 /**
- * Embedded SKU identifier ensuring valid UUID format.
+ * Value Object representing an embedded SKU identifier with UUID format validation.
+ * <p>
+ * Ensures that any SKU identifier used in the domain is a valid, non-empty UUID string.
+ * Stored as an embeddable type in JPA entities.
+ * </p>
  *
- * @param skuIdentifier UUID string
+ * @param skuIdentifier UUID string representing the SKU.
+ *
+ * @author Author
  */
 @Embeddable
 public record SkuIdentifier(String skuIdentifier) {

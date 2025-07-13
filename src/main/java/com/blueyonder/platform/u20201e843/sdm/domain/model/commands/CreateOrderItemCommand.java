@@ -2,6 +2,13 @@ package com.blueyonder.platform.u20201e843.sdm.domain.model.commands;
 
 import java.util.Date;
 
+/**
+ * Command representing the intent to create a new OrderItem in the system.
+ * <p>
+ * Encapsulates the data required for registering an order item.
+ *
+ * @author Author
+ */
 public record CreateOrderItemCommand(
         Long orderId,
         String skuIdentifier,
