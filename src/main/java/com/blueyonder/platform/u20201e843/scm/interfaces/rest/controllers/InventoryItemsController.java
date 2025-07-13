@@ -44,4 +44,5 @@ public class InventoryItemsController {
         var inventoryItemResource = InventoryItemResourceFromEntityAssembler.toResourceFromEntity(inventoryItemEntity);
         return new ResponseEntity<>(inventoryItemResource, HttpStatus.CREATED);
     }
+
 }
